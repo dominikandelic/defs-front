@@ -3,21 +3,25 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { useSubscription } from "react-stomp-hooks";
+import { useState } from "react";
 
 const PublicLinks = () => {
   return (
     <>
-      <Link href="/login" passHref legacyBehavior>
-        <Nav.Link>Login</Nav.Link>
-      </Link>
-      <Link href="/register" passHref legacyBehavior>
-        <Nav.Link>Register</Nav.Link>
+      <Link href="/upload_file" passHref legacyBehavior>
+        <Nav.Link>Upload</Nav.Link>
       </Link>
     </>
   );
 };
 
 const Navigation = () => {
+  const [activeSessionCount, setActiveSessionCount] = useState<number>();
+  useSubscription("/topic/socket_number_notification", (message) => {
+    console.log(message.body);
+    setActiveSessionCount(message.body as unknown as number);
+  });
   return (
     <Navbar sticky="top" bg="dark" variant="dark">
       <Container>
@@ -30,6 +34,7 @@ const Navigation = () => {
             <PublicLinks />
           </Nav>
         </Navbar.Collapse>
+        <span className="text-white">Active clients: {activeSessionCount}</span>
       </Container>
     </Navbar>
   );
