@@ -24,3 +24,9 @@ a {
     background: black;
   }
 }
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 50% !important;
+  }
+}

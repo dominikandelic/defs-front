@@ -33,7 +33,7 @@ const BlockchainPage = () => {
           <Row key={block.blockIndex}>
             <Card>
               <Card.Body>
-                <Card.Title>Block #{block.blockIndex + 1}</Card.Title>
+                <Card.Title>Block #{block.blockIndex}</Card.Title>
                 <Card.Text>
                   File hash: {block.fileHash}
                   <br />

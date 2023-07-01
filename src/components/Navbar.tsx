@@ -25,7 +25,6 @@ const PublicLinks = () => {
 const Navigation = () => {
   const [activeSessionCount, setActiveSessionCount] = useState<number>();
   useSubscription("/topic/socket_number_notification", (message) => {
-    console.log(message.body);
     setActiveSessionCount(message.body as unknown as number);
   });
   return (

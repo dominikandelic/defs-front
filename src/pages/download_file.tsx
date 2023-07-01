@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -11,7 +11,6 @@ type DownloadFileArgs = {
 };
 
 const DownloadFilePage = () => {
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -19,24 +18,30 @@ const DownloadFilePage = () => {
     formState: { errors },
   } = useForm<DownloadFileArgs>();
 
-  const onSubmit: SubmitHandler<DownloadFileArgs> = (data) => {
-    axios
-      .get(
+  const onSubmit: SubmitHandler<DownloadFileArgs> = async (data) => {
+    try {
+      const response = await axios.get(
         `http://localhost:8081/api/file?fileKey=${data.fileKey}&ipfsHash=${data.ipfsHash}`,
         { responseType: "blob" }
-      )
-      .then((response) => {
-        const fileNameHeader = "x-suggested-filename";
-        const suggestedFileName = response.headers[fileNameHeader];
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", suggestedFileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      });
+      );
+      const fileNameHeader = "x-suggested-filename";
+      const suggestedFileName = response.headers[fileNameHeader];
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", suggestedFileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success("Download started");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        const blob = e.response!.data as Blob;
+        const text = await blob.text();
+        toast.error(await e.response?.data.text());
+      }
+    }
   };
 
   return (

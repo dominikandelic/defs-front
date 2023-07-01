@@ -1,9 +1,16 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useStompClient, useSubscription } from "react-stomp-hooks";
 import UploadImage from "../../public/upload.svg";
@@ -17,7 +24,6 @@ type UploadFileArgs = {
 
 const UploadFilePage = () => {
   const [lastMessage, setLastMessage] = useState("No message received yet");
-  const stompClient = useStompClient();
   const {
     register,
     handleSubmit,
@@ -29,6 +35,10 @@ const UploadFilePage = () => {
     ["/topic/add_client_node", "/topic/add_new_block"],
     (message) => setLastMessage(message.body)
   );
+
+  const [show, setShow] = useState(false);
+  const [responseMessage, setResponseMessage] = useState<string>();
+  const handleClose = () => setShow(false);
 
   const onSubmit: SubmitHandler<UploadFileArgs> = async (data) => {
     try {
@@ -59,9 +69,12 @@ const UploadFilePage = () => {
           },
         }
       );
-      console.log(response.data);
+      setResponseMessage(response.data);
+      setShow(true);
     } catch (e) {
-      console.log(e);
+      if (e instanceof AxiosError) {
+        toast.error(e.response?.data);
+      }
     }
   };
 
@@ -72,6 +85,21 @@ const UploadFilePage = () => {
         <meta name="description" content="Blockchain project meta desc..." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {responseMessage}
+          <br />
+          <span className="text-danger">Don't forget your file key!</span>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Container>
         <Row>
           <Col className="d-flex aling-items-center">
