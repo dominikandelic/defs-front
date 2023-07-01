@@ -10,31 +10,20 @@ import UploadImage from "../../public/upload.svg";
 import { toast } from "react-toastify";
 
 type UploadFileArgs = {
-  name: string;
+  sender: string;
+  fileKey: string;
   file: FileList;
 };
 
 const UploadFilePage = () => {
   const [lastMessage, setLastMessage] = useState("No message received yet");
   const stompClient = useStompClient();
-  const router = useRouter();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<UploadFileArgs>();
-  const sendMessage = () => {
-    if (stompClient) {
-      //Send Message
-      stompClient.publish({
-        destination: "/app/echo",
-        body: "hello",
-      });
-    } else {
-      //Handle error
-    }
-  };
 
   useSubscription(
     ["/topic/add_client_node", "/topic/add_new_block"],
@@ -51,9 +40,8 @@ const UploadFilePage = () => {
         new Blob(
           [
             JSON.stringify({
-              receiver: "bla",
-              sender: "bla",
-              fileKey: "bla",
+              sender: data.sender,
+              fileKey: data.fileKey,
             }),
           ],
           {
@@ -71,7 +59,7 @@ const UploadFilePage = () => {
           },
         }
       );
-      router.push(`/`);
+      console.log(response.data);
     } catch (e) {
       console.log(e);
     }
@@ -93,6 +81,18 @@ const UploadFilePage = () => {
         </Row>
         <Col>
           <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row>
+              <Form.Group className="mb-3">
+                <Form.Label>Sender</Form.Label>
+                <Form.Control {...register("sender")} type="text" />
+              </Form.Group>
+            </Row>
+            <Row>
+              <Form.Group className="mb-3">
+                <Form.Label>File Key (A.K.A decryption key)</Form.Label>
+                <Form.Control {...register("fileKey")} type="text" />
+              </Form.Group>
+            </Row>
             <Row>
               <Form.Group className="mb-3">
                 <Form.Label>Your submission</Form.Label>

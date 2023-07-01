@@ -12,6 +12,12 @@ const PublicLinks = () => {
       <Link href="/upload_file" passHref legacyBehavior>
         <Nav.Link>Upload</Nav.Link>
       </Link>
+      <Link href="/download_file" passHref legacyBehavior>
+        <Nav.Link>Download</Nav.Link>
+      </Link>
+      <Link href="/blockchain" passHref legacyBehavior>
+        <Nav.Link>Blockchain</Nav.Link>
+      </Link>
     </>
   );
 };
