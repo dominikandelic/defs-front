@@ -35,6 +35,7 @@ const BlockchainPage = () => {
               <Card.Body>
                 <Card.Title>Block #{block.blockIndex}</Card.Title>
                 <Card.Text>
+                  Block hash: {block.blockHash} <br />
                   File hash: {block.fileHash}
                   <br />
                   File ID: {block.fileId} <br />
