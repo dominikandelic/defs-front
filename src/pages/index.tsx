@@ -2,6 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Col, Container, Row } from "react-bootstrap";
 import FileStorageImage from "../../public/file_storage.svg";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -49,8 +50,9 @@ export default function Home() {
         </Row>
         <Row>
           <h3>
-            3. The recipient goes to our <a href="#">Download</a> page and
-            pastes the file hash*, along with the file key.
+            3. The recipient goes to our{" "}
+            <Link href="/download_file">Download</Link> page and pastes the file
+            hash*, along with the file key.
           </h3>
         </Row>
         <Row>
